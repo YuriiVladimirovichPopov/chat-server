@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  main:
+    container_name: chat-server
+    build:
+      context: .
+    env_file:
+      - .development.env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 9000:9000
+      - 9229:9229
+    command: yarn start:dev
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - chat-network
+
+  postgres:
+    container_name: chat-server2
+    image: postgres:16
+    env_file:
+      - .development.env
+    environment:
+      - POSTGRES_PASSWORD=30.06.13
+      - PG_DATA=/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - chat-network
+
+volumes:
+  pgdata:
+
+networks:
+  chat-network:
